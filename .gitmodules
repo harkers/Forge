@@ -1,0 +1,3 @@
+[submodule "products/privacy-intake"]
+	path = products/privacy-intake
+	url = https://github.com/harkers/github-privacy-intake.git
