@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-# Managed by harkers/repo-standards at revision 0094d0b4. Use .repo-standards.yml overrides instead of editing this header away.
+# Managed by harkers/repo-standards at revision c108c321. Use .repo-standards.yml overrides instead of editing this header away.
 """Validate and repair the append-only remote-action ledger.
 
 Why this exists
