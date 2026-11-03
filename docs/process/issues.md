@@ -1,4 +1,4 @@
-<!-- Managed by harkers/repo-standards at revision c108c321. Use .repo-standards.yml overrides instead of editing this header away. -->
+<!-- Managed by harkers/repo-standards at revision b6eaeaa5. Use .repo-standards.yml overrides instead of editing this header away. -->
 
 # Issue Standard
 
@@ -33,6 +33,8 @@ Priority is remediation urgency from impact/risk, not estimated effort. The cano
 in `docs/process/behavioral-policy.md` and `docs/process/completion-packet.md`.
 
 ### Priority labels
+
+The full estate label catalogue, including these, is `standards/labels.md`.
 
 Preferred GitHub labels are:
 

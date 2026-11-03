@@ -1,4 +1,4 @@
-<!-- Managed by harkers/repo-standards at revision c108c321. Use .repo-standards.yml overrides instead of editing this header away. -->
+<!-- Managed by harkers/repo-standards at revision b6eaeaa5. Use .repo-standards.yml overrides instead of editing this header away. -->
 
 # Canonical Agent Operating Contract
 
@@ -63,6 +63,10 @@ Binding obligations, all defined in full by that document:
 - A material finding without a `GitHub issue:` reference is an incomplete report, not a complete one.
 - A known blocking defect is incompatible with `DONE`; use `BLOCKED`, `FAILED` or `REQUIRES_REMEDIATION`.
 - Local artefacts are not delivery: a commit, push, PR and CI check are part of the gate for deliverable engineering work.
+
+## Knowledge
+
+Harker Systems uses Obsidian as its authoritative infrastructure and operational knowledge repository. Notion has been permanently retired. Before infrastructure work, consult relevant Obsidian documentation. Following substantive changes, update the affected Obsidian documentation. Use Forgejo for source code, version history and work tracking. Do not request, recommend, initialise or reconnect Notion. Never store credentials or secrets in Obsidian. Details: `docs/process/knowledge.md`.
 
 ## Required delivery flow
 

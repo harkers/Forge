@@ -1,4 +1,4 @@
-<!-- Managed by harkers/repo-standards at revision c108c321. Use .repo-standards.yml overrides instead of editing this header away. -->
+<!-- Managed by harkers/repo-standards at revision b6eaeaa5. Use .repo-standards.yml overrides instead of editing this header away. -->
 
 # Build Assurance Standard
 
@@ -225,6 +225,14 @@ timeout is applied by default so a hanging control cannot hang the gate indefini
 Where remote CI *is* available it remains the primary gate; this is a declared substitute, not a
 replacement. The rationale for not running remote CI — budget, quota or policy — belongs in
 repository override configuration, recorded against a linked issue.
+
+### Re-runnable CI workflows
+
+Every CI workflow triggered by `push` or `pull_request` (for example `validate.yml`,
+`verify.yml`) MUST also declare `workflow_dispatch`. Forgejo's API cannot re-run a finished job;
+dispatching the workflow on a ref (`POST /repos/{owner}/{repo}/actions/workflows/{file}/dispatches`)
+is the only API route to re-run a gate after a runner-side failure, without pushing an empty
+commit. Release workflows triggered only by tags are exempt.
 
 ## Lifecycle integration
 
