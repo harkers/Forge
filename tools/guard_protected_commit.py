@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-# Managed by harkers/repo-standards at revision c108c321. Use .repo-standards.yml overrides instead of editing this header away.
+# Managed by harkers/repo-standards at revision b6eaeaa5. Use .repo-standards.yml overrides instead of editing this header away.
 """Refuse to create a commit in a protected branch's checkout.
 
 `process/worktrees.md` already states the rule this enforces:
