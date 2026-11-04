@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-# Managed by harkers/repo-standards at revision b6eaeaa5. Use .repo-standards.yml overrides instead of editing this header away.
+# Managed by harkers/repo-standards at revision 13693659. Use .repo-standards.yml overrides instead of editing this header away.
 """Run the assurance controls and assemble the emitter's input files.
 
 Why this exists
@@ -27,7 +27,7 @@ that reports nothing is how a real finding disappears.
 Usage:
 
     python -m tools.assemble_results --control secret_detection=gitleaks \\
-        --control sast=semgrep --results results --out results
+        --control sast=opengrep --results results --out results
 
 Every `--control name=command` runs `command` with `bash -euo pipefail -c`,
 captures stdout/stderr and the exit code, and parses the raw output for
@@ -127,6 +127,28 @@ SARIF_SEVERITY = {
 }
 
 
+def _sarif_severity(result: dict[str, Any], rules: dict[str, Any]) -> str:
+    """Packet severity for one SARIF result.
+
+    Level per SARIF 2.1.0 3.27.10: `result.level`, else the rule's
+    `defaultConfiguration.level` (by `ruleId`), else `warning`. Semgrep and
+    opengrep never set `result.level`.
+
+    Only an `error` from a rule tagged `HIGH CONFIDENCE` or `MEDIUM CONFIDENCE`
+    blocks: the threshold the trusted verifier and this repository's CI use.
+    LOW (or untagged) confidence `error` rules are audit rules; they warn.
+    """
+    rule = rules.get(result.get("ruleId"), {})
+    level = result.get("level")
+    if level is None:
+        level = (rule.get("defaultConfiguration") or {}).get("level", "warning")
+    level = str(level).lower()
+    tags = (rule.get("properties") or {}).get("tags") or []
+    if level == "error" and not {"HIGH CONFIDENCE", "MEDIUM CONFIDENCE"} & set(tags):
+        return "medium"
+    return SARIF_SEVERITY.get(level, level)
+
+
 def parse_semgrep(path: Path) -> list[dict[str, Any]]:
     if not path.exists():
         return []
@@ -136,6 +158,8 @@ def parse_semgrep(path: Path) -> list[dict[str, Any]]:
         return []
     findings = []
     for run in payload.get("runs", []):
+        driver = (run.get("tool") or {}).get("driver") or {}
+        rules = {rule.get("id"): rule for rule in driver.get("rules") or []}
         for result in run.get("results", []):
             # A result the scanner itself suppressed is not a finding. Semgrep
             # records an in-source `nosemgrep` as `suppressions`, and exits 0 —
@@ -145,17 +169,16 @@ def parse_semgrep(path: Path) -> list[dict[str, Any]]:
             if result.get("suppressions"):
                 continue
             location = (result.get("locations") or [{}])[0].get("physicalLocation", {})
-            raw = str((result.get("extra") or {}).get("severity", "warning")).lower()
             findings.append(
                 {
                     "control_name": "sast",
-                    "severity": SARIF_SEVERITY.get(raw, raw),
-                    "scanner": "semgrep",
-                    "rule_or_vuln_id": result.get("check_id", "semgrep-rule"),
+                    "severity": _sarif_severity(result, rules),
+                    "scanner": "opengrep",
+                    "rule_or_vuln_id": result.get("ruleId", "semgrep-rule"),
                     "component": location.get("artifactLocation", {}).get(
                         "uri", "unknown"
                     ),
-                    "message": (result.get("extra") or {}).get("message", ""),
+                    "message": (result.get("message") or {}).get("text", ""),
                 }
             )
     return findings

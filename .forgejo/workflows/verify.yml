@@ -1,4 +1,4 @@
-# Managed by harkers/repo-standards at revision b6eaeaa5. Use .repo-standards.yml overrides instead of editing this header away.
+# Managed by harkers/repo-standards at revision 13693659. Use .repo-standards.yml overrides instead of editing this header away.
 # Reference verification workflow (template; not run from this repository).
 #
 # Standards: standards/build-assurance.md, standards/security-assurance.md.
@@ -31,9 +31,9 @@ on:
         required: false
         default: gitleaks
       sast_tool:
-        description: SAST tool (default semgrep; replaceable)
+        description: SAST tool (default opengrep; replaceable)
         required: false
-        default: semgrep
+        default: opengrep
       sbom_tool:
         description: SBOM tool (default syft; replaceable)
         required: false
@@ -72,7 +72,7 @@ jobs:
     # The "Resolve assurance profile" step below sets it for all later steps.
     env:
       SECRET_DETECTION_TOOL: ${{ inputs.secret_detection_tool || 'gitleaks' }}
-      SAST_TOOL: ${{ inputs.sast_tool || 'semgrep' }}
+      SAST_TOOL: ${{ inputs.sast_tool || 'opengrep' }}
       SBOM_TOOL: ${{ inputs.sbom_tool || 'syft' }}
       VULNERABILITY_SCAN_TOOL: ${{ inputs.vulnerability_scan_tool || 'grype' }}
       ISSUE_CREATION: ${{ inputs.issue_creation || 'false' }}
@@ -113,11 +113,12 @@ jobs:
       #   gitleaks v8.30.1   github.com/gitleaks/gitleaks/releases/tag/v8.30.1
       #   grype    v0.120.0  github.com/anchore/grype/releases/tag/v0.120.0
       #   syft     v1.54.0   github.com/anchore/syft/releases/tag/v1.54.0
-      #   semgrep  1.179.0   pypi.org/project/semgrep/1.179.0
+      #   opengrep v1.31.0   github.com/opengrep/opengrep/releases/tag/v1.31.0
+      #                      (rules: .repo-standards/sast-rules.yml, managed, offline)
       #   trivy    v0.75.0   github.com/aquasecurity/trivy/releases/tag/v0.75.0
       #
       # Scanner substitution: this step installs the DEFAULT reference set
-      # (the workflow-input defaults gitleaks/semgrep/syft/grype). A
+      # (the workflow-input defaults gitleaks/opengrep/syft/grype). A
       # repository that overrides secret_detection_tool, sast_tool,
       # sbom_tool or vulnerability_scan_tool with its own scanner MUST
       # replace this install step with the installation of its own
@@ -142,13 +143,18 @@ jobs:
             "https://github.com/anchore/syft/releases/download/v1.54.0/syft_1.54.0_linux_amd64.tar.gz"
           echo "54a87372498168b2d033e876fd41fa4e8035b872699e525a57046e1f2f09c860  /tmp/syft.tar.gz" | sha256sum -c -  # vendor syft checksums.txt
           tar -xzf /tmp/syft.tar.gz -C /usr/local/bin syft
-          # semgrep 1.179.0 — pinned pip version (official PyPI package)
+          # opengrep v1.31.0 — pinned release download (manylinux: glibc; the
+          # musllinux build needs the musl loader). Same binary as the verifier.
+          curl -sSfL -o /tmp/opengrep \
+            "https://github.com/opengrep/opengrep/releases/download/v1.31.0/opengrep_manylinux_x86"
+          echo "dbbe3c2058dbe600c449a8ba22ea79a1643a6660658400090d0323a8d0d31147  /tmp/opengrep" | sha256sum -c -  # GitHub release asset digest
+          install -m 0755 /tmp/opengrep /usr/local/bin/opengrep
           # --break-system-packages: Debian/Ubuntu images mark the system Python
           # externally managed (PEP 668) and ship distro-owned packages without RECORD
           # files (e.g. PyJWT), so pip cannot uninstall them: --ignore-installed installs
           # over them. PyYAML is pinned here because tools/ imports it and non-GitHub
           # runner images do not ship it. The job container is disposable.
-          python3 -m pip install --disable-pip-version-check --break-system-packages --ignore-installed "semgrep==1.179.0" "PyYAML==6.0.2"
+          python3 -m pip install --disable-pip-version-check --break-system-packages --ignore-installed "PyYAML==6.0.2"
           # trivy v0.75.0 — pinned release download (official GitHub release).
           # Trivy backs the infrastructure_scan producer for the
           # `infrastructure` profile (rs#77).
@@ -158,7 +164,7 @@ jobs:
           tar -xzf /tmp/trivy.tar.gz -C /usr/local/bin trivy
           # No silent success: every reference scanner MUST resolve on PATH
           # and report a version, or this step fails the job.
-          for tool in gitleaks grype syft semgrep; do
+          for tool in gitleaks grype syft opengrep; do
             if ! command -v "$tool" >/dev/null 2>&1; then
               echo "::error::reference scanner missing after install step: ${tool}"
               exit 1
@@ -284,18 +290,21 @@ jobs:
           set -euo pipefail
           python tools/validate_evidence.py evidence.json
 
-      # actions/upload-artifact v4 needs GitHub's artifact service; Forgejo/Gitea runners
-      # reject it. On other forges the packet is printed to the job log instead.
-      - name: Show evidence packet (non-GitHub forges)
-        if: ${{ github.server_url != 'https://github.com' }}
+      # The packet also goes to the job log for quick reading; the artefact below is the
+      # retained, authoritative copy (standards/completion-evidence.md).
+      - name: Show evidence packet
+        if: ${{ !cancelled() }}
         run: |
           echo "::group::evidence.json"
           cat evidence.json 2>/dev/null || echo "(no evidence.json)"
           echo "::endgroup::"
 
+      # actions/upload-artifact v4 refuses non-GitHub servers; the Forgejo fork speaks the
+      # same v4 protocol to Forgejo's artifact store (measured on the homelab runner, #15).
+      # Runs on failure too: a FAIL packet is evidence worth keeping.
       - name: Upload evidence and SBOM
-        if: ${{ github.server_url == 'https://github.com' }}
-        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        if: ${{ !cancelled() }}
+        uses: https://code.forgejo.org/forgejo/upload-artifact@16871d9e8cfcf27ff31822cac382bbb5450f1e1e # v4
         with:
           name: verification-evidence-${{ github.sha }}
           path: |

@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-# Managed by harkers/repo-standards at revision b6eaeaa5. Use .repo-standards.yml overrides instead of editing this header away.
+# Managed by harkers/repo-standards at revision 13693659. Use .repo-standards.yml overrides instead of editing this header away.
 """Canonical producer registry: which command satisfies which control.
 
 A *producer* is the command that runs a control and writes its raw report. This
@@ -39,7 +39,14 @@ SHIPPED_PRODUCERS: dict[str, str] = {
         "gitleaks detect --source . --redact --report-format json "
         '--report-path "{artifact}"'
     ),
-    "sast": 'semgrep ci --config auto --sarif --output "{artifact}"',
+    # Pinned opengrep with the offline rule bundle shipped as a managed file
+    # (issue 64): the same rules and blocking threshold as the trusted verifier.
+    # `nosem` comments are not honoured; exceptions go through the registry.
+    "sast": (
+        "opengrep scan --config .repo-standards/sast-rules.yml --sarif "
+        '--output "{artifact}" --disable-nosem --disable-version-check '
+        "--x-ignore-semgrepignore-files ."
+    ),
     "sbom": 'syft dir:. -o cyclonedx-json="{artifact}"',
     "vulnerability_scan": 'grype dir:. -o json --file "{artifact}"',
     "infrastructure_scan": 'trivy config --format json --output "{artifact}" .',

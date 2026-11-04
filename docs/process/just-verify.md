@@ -1,4 +1,4 @@
-<!-- Managed by harkers/repo-standards at revision b6eaeaa5. Use .repo-standards.yml overrides instead of editing this header away. -->
+<!-- Managed by harkers/repo-standards at revision 13693659. Use .repo-standards.yml overrides instead of editing this header away. -->
 
 # `just verify` guidance (RS-BUILD-001)
 
@@ -62,7 +62,8 @@ secret-detection:
     --report-path results/gitleaks.json
 
 sast:
-  semgrep ci --config auto --sarif --output results/semgrep.sarif
+  opengrep scan --config .repo-standards/sast-rules.yml --sarif --output results/semgrep.sarif \
+    --disable-nosem --disable-version-check --x-ignore-semgrepignore-files .
 
 sbom:
   syft dir:. -o cyclonedx-json=results/sbom.cdx.json
@@ -107,7 +108,7 @@ MUST never be translated to `PASS`.
 | `unit` | RS-BUILD-001 | unit tests |
 | `integration` | RS-BUILD-001 | integration tests |
 | `secret-detection` (gitleaks) | RS-SEC-001 | committed-secret scan |
-| `sast` (semgrep) | RS-SEC-004 | static security analysis |
+| `sast` (opengrep) | RS-SEC-004 | static security analysis |
 | `sbom` (syft) | RS-SEC-002 | machine-readable SBOM (CycloneDX JSON) |
 | `vulnerability-scan` (grype) | RS-SEC-003 | dependency vulnerability scan |
 | `validate-evidence` | RS-BUILD-002 | Verification Evidence Packet validation |
