@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-# Managed by harkers/repo-standards at revision f0f237d5. Use .repo-standards.yml overrides instead of editing this header away.
+# Managed by harkers/repo-standards at revision 27bed4b1. Use .repo-standards.yml overrides instead of editing this header away.
 """Canonical producer registry: which command satisfies which control.
 
 A *producer* is the command that runs a control and writes its raw report. This
