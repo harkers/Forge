@@ -1,4 +1,4 @@
-<!-- Managed by harkers/repo-standards at revision a74cbfaa. Use .repo-standards.yml overrides instead of editing this header away. -->
+<!-- Managed by harkers/repo-standards at revision f0f237d5. Use .repo-standards.yml overrides instead of editing this header away. -->
 
 # Build Assurance Standard
 
