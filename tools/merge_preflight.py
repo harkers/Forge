@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-# Managed by harkers/repo-standards at revision a99cb011. Use .repo-standards.yml overrides instead of editing this header away.
+# Managed by harkers/repo-standards at revision 626cd098. Use .repo-standards.yml overrides instead of editing this header away.
 """Check a branch before starting work on it, and again before merging it.
 
 Worktree isolation is per-task. It stops two agents sharing a *checkout*; it does
@@ -132,7 +132,8 @@ def remote_overlaps(
     try:
         for pr in _forgejo_pages(api, f"/repos/{repo}/pulls?state=open", token):
             head = (pr.get("head") or {}).get("ref", "?")
-            if head == branch:
+            # Own PR, or one stacked on this branch: already coordinated with it.
+            if branch in (head, (pr.get("base") or {}).get("ref")):
                 continue
             touched = {
                 f.get("filename")

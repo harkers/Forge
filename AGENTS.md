@@ -1,4 +1,4 @@
-<!-- Managed by harkers/repo-standards at revision a99cb011. Use .repo-standards.yml overrides instead of editing this header away. -->
+<!-- Managed by harkers/repo-standards at revision 626cd098. Use .repo-standards.yml overrides instead of editing this header away. -->
 
 # Canonical Agent Operating Contract
 
@@ -68,6 +68,14 @@ Binding obligations, all defined in full by that document:
 ## Knowledge
 
 Harker Systems uses Obsidian as its authoritative infrastructure and operational knowledge repository. Notion has been permanently retired. Before infrastructure work, consult relevant Obsidian documentation. Following substantive changes, update the affected Obsidian documentation. Use Forgejo for source code, version history and work tracking. Do not request, recommend, initialise or reconnect Notion. Never store credentials or secrets in Obsidian. Details: `docs/process/knowledge.md`.
+
+## Logging
+
+Software built or changed here ships with useful logs and a verbose mode: a log level settable without a rebuild (default `info`, verbose `debug`), every user-visible failure logged at `warn`/`error` with actionable context, client apps reporting failures to the server log, and no secrets in logs. Missing logging is a review finding. Details: `docs/process/logging.md`.
+
+## Engineering and operability
+
+New work starts on a new branch in its own worktree, never the live checkout. Tools are CLI-first. Services check their dependencies at startup, treat third-party rate limits as configuration and back off on `429`/`503`, run long jobs inside the service with visible progress, and report their version. Every deploy keeps a rollback. Tests never depend on wall-clock timing. Host moves follow the vault runbook. The Harker Knowledge vault is updated as the human reference. Details: `docs/process/engineering.md`.
 
 ## Required delivery flow
 
