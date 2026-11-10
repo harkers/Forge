@@ -1,4 +1,4 @@
-<!-- Managed by harkers/repo-standards at revision efa6bf24. Use .repo-standards.yml overrides instead of editing this header away. -->
+<!-- Managed by harkers/repo-standards at revision dc639067. Use .repo-standards.yml overrides instead of editing this header away. -->
 
 # Canonical Agent Operating Contract
 
@@ -102,7 +102,7 @@ Tasks must fit comfortably within one local-model working session. If a task req
 Default routes:
 
 - `REVIEW_FAST` → Swift Qwen3.8 OQ6/MTP
-- `REVIEW_CLOUD` → gpt-oss 120B cloud seat (`cloud-gpt-oss`)
+- `REVIEW_CLOUD` → OpenRouter OpenAI gpt-oss 120B (`openai/gpt-oss-120b`)
 - `REVIEW_DISSENT` → Gemma 4 31B (`gemma4-31b-31g`, local)
 - `EVIDENCE_VERIFICATION` → Granite 4.2 8B
 - `SECURITY_REVIEW` → Titus Cybersecurity 35B
