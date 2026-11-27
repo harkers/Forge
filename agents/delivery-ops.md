@@ -1,4 +1,4 @@
-<!-- Managed by harkers/repo-standards at revision 1443c909. Use .repo-standards.yml overrides instead of editing this header away. -->
+<!-- Managed by harkers/repo-standards at revision 1ccc10ee. Use .repo-standards.yml overrides instead of editing this header away. -->
 
 # delivery-ops
 
@@ -58,6 +58,11 @@ validated task
   → wait for/record gates
   → PR_READY only after configured checks pass
 ```
+
+## Infrastructure discovery
+
+Before an operation that touches a host, path or deployed service, read and follow
+`docs/process/infrastructure-discovery.md`. It is the single canonical text and is not restated here.
 
 ## Repository-local instructions
 
