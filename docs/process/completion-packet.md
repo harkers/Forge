@@ -1,4 +1,4 @@
-<!-- Managed by harkers/repo-standards at revision 1443c909. Use .repo-standards.yml overrides instead of editing this header away. -->
+<!-- Managed by harkers/repo-standards at revision 1ccc10ee. Use .repo-standards.yml overrides instead of editing this header away. -->
 
 # Completion Packet Standard
 
@@ -132,6 +132,16 @@ verification_evidence:
   tracked_findings: []
   ci_run: https://forge.harker.systems/vulcan/repo/actions/runs/1
 
+# Required when the task touched a host, path or deployed service
+# (docs/process/infrastructure-discovery.md). Omit or set touches_infrastructure: false otherwise.
+infrastructure_discovery:
+  touches_infrastructure: true
+  records:
+    - evidence/infrastructure-discovery/issue-123-zeus-vm-221.json
+  validation_command: python3 tools/validate_discovery.py --require --task 123
+  exit_code: 0
+  unresolved_material_discrepancies: 0 # any value above 0 blocks DONE
+
 risks:
   known: []
   accepted: []
@@ -227,3 +237,4 @@ The forward-progress governor and dispatch tooling must use `highest_unresolved_
 - Fixed-in-turn defects remain in `defects.items` with regression evidence; do not erase the fact that the defect existed.
 - The reporter may transform the packet into worklogs/summaries but must not alter source evidence, defect priority/state, or silently upgrade verification status.
 - `status: COMPLETE` is invalid when `verification_evidence.state != PASS` unless every non-PASS control carries an unexpired `exception`.
+- When `infrastructure_discovery.touches_infrastructure` is true, `validation_command` must be the `--require --task` run of `tools/validate_discovery.py` with exit code 0, and `status: COMPLETE` is invalid while `unresolved_material_discrepancies` is above zero (`docs/process/infrastructure-discovery.md`).

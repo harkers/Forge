@@ -1,4 +1,4 @@
-# Managed by harkers/repo-standards at revision 1443c909. Use .repo-standards.yml overrides instead of editing this header away.
+# Managed by harkers/repo-standards at revision 1ccc10ee. Use .repo-standards.yml overrides instead of editing this header away.
 # Reference verification workflow (template; not run from this repository).
 #
 # Standards: standards/build-assurance.md, standards/security-assurance.md.
@@ -319,6 +319,14 @@ jobs:
         run: |
           set -euo pipefail
           python tools/validate_evidence.py evidence.json
+
+      # standards/infrastructure-discovery.md: every discovery record committed under
+      # evidence/infrastructure-discovery/ must be valid. A repository with no records
+      # passes; a task that touches a host requires its record with --require --task.
+      - name: Validate infrastructure discovery records
+        run: |
+          set -euo pipefail
+          python tools/validate_discovery.py --root .
 
       # The packet also goes to the job log for quick reading; the artefact below is the
       # retained, authoritative copy (standards/completion-evidence.md).

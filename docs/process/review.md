@@ -1,4 +1,4 @@
-<!-- Managed by harkers/repo-standards at revision 1443c909. Use .repo-standards.yml overrides instead of editing this header away. -->
+<!-- Managed by harkers/repo-standards at revision 1ccc10ee. Use .repo-standards.yml overrides instead of editing this header away. -->
 
 # Review and Verification Standard
 
@@ -15,6 +15,7 @@ Checks:
 - architecture consistency;
 - test sufficiency;
 - logging: failure paths log at `warn`/`error` with context, verbose mode exists (`docs/process/logging.md`);
+- infrastructure discovery: work that touched a host, path or deployed service meets `docs/process/infrastructure-discovery.md`;
 - operability: startup self-check, configurable external rates with backoff, version identity, rollback recorded, no wall-clock tests (`docs/process/engineering.md`);
 - unnecessary complexity;
 - regression and scope-creep risk.

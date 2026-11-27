@@ -1,4 +1,4 @@
-<!-- Managed by harkers/repo-standards at revision 1443c909. Use .repo-standards.yml overrides instead of editing this header away. -->
+<!-- Managed by harkers/repo-standards at revision 1ccc10ee. Use .repo-standards.yml overrides instead of editing this header away. -->
 
 # evidence-verifier
 
@@ -53,6 +53,12 @@ For each material claim: claim ID/text, status, evidence references, confidence 
 ## Build Assurance obligations
 
 - verify the packet's `commit` equals the commit under claim and that `state` is `PASS` before accepting a completion claim.
+
+## Infrastructure discovery
+
+For a task that touched a host, path or deployed service, check the discovery evidence that
+`docs/process/infrastructure-discovery.md` (the single canonical text) asks for. It is not restated
+here.
 
 ## Repository-local instructions
 

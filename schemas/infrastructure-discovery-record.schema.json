@@ -1,0 +1,218 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://forge.harker.systems/vulcan/repo-standards/schemas/infrastructure-discovery-record.schema.json",
+  "title": "Infrastructure discovery record",
+  "description": "What an agent verified about one host before a task touched it (standards/infrastructure-discovery.md). Structural rules only; tools/validate_discovery.py adds the cross-field rules.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "task",
+    "host",
+    "checks",
+    "sources",
+    "verified_at",
+    "material",
+    "decision"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "1.0"
+    },
+    "task": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Task, issue or WorkItem identifier the discovery was made for.",
+      "pattern": "\\S"
+    },
+    "agent": {
+      "type": "string",
+      "description": "Agent or role that performed the discovery."
+    },
+    "host": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "name",
+        "classification"
+      ],
+      "properties": {
+        "name": {
+          "type": "string",
+          "minLength": 1,
+          "pattern": "\\S"
+        },
+        "address": {
+          "type": "string"
+        },
+        "purpose": {
+          "type": "string"
+        },
+        "classification": {
+          "enum": [
+            "production",
+            "development",
+            "rollback",
+            "unknown"
+          ],
+          "description": "Observed role of the host. 'unknown' is only honest when the live check could not establish it."
+        }
+      }
+    },
+    "checks": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "item",
+          "category",
+          "claimed",
+          "claimed_source",
+          "observed",
+          "observed_source",
+          "material"
+        ],
+        "properties": {
+          "item": {
+            "type": "string",
+            "minLength": 1,
+            "description": "What was checked, for example 'production database host'.",
+            "pattern": "\\S"
+          },
+          "category": {
+            "enum": [
+              "production_host",
+              "database",
+              "deployment_target",
+              "service_identity",
+              "schema_version",
+              "credential_scope",
+              "path",
+              "version",
+              "network",
+              "description",
+              "historical_reference",
+              "other"
+            ]
+          },
+          "claimed": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "Value the brief or documentation gave; null when none was given."
+          },
+          "claimed_source": {
+            "type": "string",
+            "minLength": 1,
+            "pattern": "\\S"
+          },
+          "observed": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "Value observed on the live system or in the vault; null when it could not be observed."
+          },
+          "observed_source": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Command, vault note or log the observed value came from.",
+            "pattern": "\\S"
+          },
+          "material": {
+            "type": "boolean"
+          }
+        }
+      }
+    },
+    "sources": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "vault",
+        "live"
+      ],
+      "properties": {
+        "vault": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "pattern": "\\S"
+          }
+        },
+        "live": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "pattern": "\\S"
+          }
+        }
+      }
+    },
+    "verified_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Timezone-aware RFC 3339 date-time; not in the future."
+    },
+    "material": {
+      "type": "boolean",
+      "description": "True when any check carries a material discrepancy."
+    },
+    "decision": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "outcome",
+        "rationale"
+      ],
+      "properties": {
+        "outcome": {
+          "enum": [
+            "proceed_as_documented",
+            "proceed_with_verified",
+            "stopped_escalated",
+            "record_and_correct"
+          ]
+        },
+        "rationale": {
+          "type": "string",
+          "minLength": 1,
+          "pattern": "\\S"
+        },
+        "intent_unambiguous": {
+          "type": "boolean"
+        },
+        "authority": {
+          "type": "string",
+          "description": "What establishes the verified value as the intended target."
+        },
+        "deviation": {
+          "type": "string",
+          "description": "How the action differs from the brief."
+        },
+        "escalated_to": {
+          "type": "string"
+        },
+        "correction": {
+          "type": "string",
+          "description": "Issue, pull request or vault note that corrects the documentation."
+        },
+        "covers": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "\\S"
+          },
+          "description": "For proceed_with_verified: the item of every material discrepancy the authority and deviation cover. An uncovered material discrepancy fails closed."
+        }
+      }
+    }
+  }
+}

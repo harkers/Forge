@@ -1,4 +1,4 @@
-<!-- Managed by harkers/repo-standards at revision 1443c909. Use .repo-standards.yml overrides instead of editing this header away. -->
+<!-- Managed by harkers/repo-standards at revision 1ccc10ee. Use .repo-standards.yml overrides instead of editing this header away. -->
 
 # Pull Request Standard
 
@@ -57,7 +57,7 @@ A PR may become ready only when:
 
 ## Merge boundary
 
-`PR_READY` is permission to request/perform final merge according to repository policy; it is not itself a merge instruction. Delivery agents must not infer merge permission solely from a passing review.
+`PR_READY` is permission to request/perform final merge according to repository policy; it is not itself a merge instruction. A passing review alone is not merge permission: the merge conditions, roles and exception classes in `delivery-governance.md` decide, and when they are met the coordinator merges without asking again.
 
 ## Cloud review
 

@@ -1,11 +1,12 @@
-<!-- Managed by harkers/repo-standards at revision 1443c909. Use .repo-standards.yml overrides instead of editing this header away. -->
+<!-- Managed by harkers/repo-standards at revision 1ccc10ee. Use .repo-standards.yml overrides instead of editing this header away. -->
 
 # Engineering and Operability Standard
 
 Owner instruction, 2026-11-06. These rules came out of moving MediaFlow from athena to Zeus VM 221,
 where each gap below cost time. This file is the canonical source; `AGENTS.md`, the global Claude
 instructions and the Harker Knowledge vault note **Engineering standards** point here. Logging has
-its own standard: `docs/process/logging.md`.
+its own standard: `docs/process/logging.md`. Verifying hosts, paths and deployed services before
+touching them has its own standard: `docs/process/infrastructure-discovery.md`.
 
 ## How work is done
 
@@ -51,7 +52,8 @@ its own standard: `docs/process/logging.md`.
 10. **Moving a service to another host** follows the vault runbook **Moving a service to another
     host**: user and group ids, share and file permissions tested as the service user, DNS and
     host overrides, firewall rules, absolute paths stored in data, secrets, backups and the
-    rollback path. The move is not done until every file the service needs has been opened as
+    rollback path, with every host and path verified as `docs/process/infrastructure-discovery.md`
+    requires. The move is not done until every file the service needs has been opened as
     the service user on the new host.
 
 ## Review

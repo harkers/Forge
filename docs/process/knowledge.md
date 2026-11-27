@@ -1,4 +1,4 @@
-<!-- Managed by harkers/repo-standards at revision 1443c909. Use .repo-standards.yml overrides instead of editing this header away. -->
+<!-- Managed by harkers/repo-standards at revision 1ccc10ee. Use .repo-standards.yml overrides instead of editing this header away. -->
 
 # Knowledge Management Standard
 
@@ -33,7 +33,8 @@ Markdown with lightweight YAML properties is the format. One source per fact: li
 1. **Before infrastructure or application work**, read the relevant notes: `00-Home/Dashboard.md`,
    `02-Infrastructure/`, `01-Projects/`, and the note whose `repo` property names the repository
    being changed. Compare documented and observed state; report discrepancies rather than trusting
-   either blindly. Notes marked `verified: no` are unchecked.
+   either blindly. Notes marked `verified: no` are unchecked. Work that touches a host, path or
+   deployed service follows `docs/process/infrastructure-discovery.md`.
 2. **After a substantive, verified change** (an address, a deployment, a status, a decision),
    update the affected note in place: change the fact, bump `updated`, set `verified` and
    `sources`. Record a material architectural decision as a decision note. Document only what was

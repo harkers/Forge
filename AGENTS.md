@@ -1,4 +1,4 @@
-<!-- Managed by harkers/repo-standards at revision 1443c909. Use .repo-standards.yml overrides instead of editing this header away. -->
+<!-- Managed by harkers/repo-standards at revision 1ccc10ee. Use .repo-standards.yml overrides instead of editing this header away. -->
 
 # Canonical Agent Operating Contract
 
@@ -77,6 +77,10 @@ Software built or changed here ships with useful logs and a verbose mode: a log 
 
 New work starts on a new branch in its own worktree, never the live checkout. Tools are CLI-first. Services check their dependencies at startup, treat third-party rate limits as configuration and back off on `429`/`503`, run long jobs inside the service with visible progress, and report their version. Every deploy keeps a rollback. Tests never depend on wall-clock timing. Host moves follow the vault runbook. The Harker Knowledge vault is updated as the human reference. Details: `docs/process/engineering.md`.
 
+## Infrastructure discovery
+
+Mandatory for every Software Factory project. Before any task that touches a host, a path or a deployed service, read and follow `docs/process/infrastructure-discovery.md`. That file is the single canonical text; nothing here restates or narrows it.
+
 ## Required delivery flow
 
 `feature/issue → specification → implementation plan or plan-set → bounded implementation issue → worktree → scout → builder → task validation → atomic commit → draft PR → test engineer → fast reviewer → conditional cloud/specialist review → evidence verifier → reporter → PR_READY`
@@ -91,7 +95,7 @@ After a bounded task is implemented and its targeted validation passes:
 4. If no PR exists and at least one verified implementation commit exists, a draft PR is opened using the repository PR template.
 5. Subsequent bounded tasks create further atomic commits on the same branch and update the same PR.
 6. A PR may move from draft to ready only after configured review, verification and CI gates pass.
-7. Delivery Ops must never merge merely because an agent says work is complete.
+7. Delivery Ops must never merge merely because an agent says work is complete. It merges when the conditions in `standards/delivery-governance.md` hold (independent review of the exact head, green CI, evidence), and not otherwise.
 
 ## Task sizing
 
