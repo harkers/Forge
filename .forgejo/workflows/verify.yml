@@ -1,4 +1,4 @@
-# Managed by harkers/repo-standards at revision 1ccc10ee. Use .repo-standards.yml overrides instead of editing this header away.
+# Managed by harkers/repo-standards at revision 9a0c7824. Use .repo-standards.yml overrides instead of editing this header away.
 # Reference verification workflow (template; not run from this repository).
 #
 # Standards: standards/build-assurance.md, standards/security-assurance.md.
@@ -56,7 +56,11 @@ jobs:
     runs-on: ubuntu-latest
     # Standards-sync PRs (zeus-ops) merge automatically, so verifying them only queues work
     # on the single build runner; the repository's own gaps show on the push to main.
-    if: ${{ !startsWith(github.head_ref, 'chore/repo-standards-') }}
+    # The skip applies only when the repository owner opened the PR AND made this push (the sync runs as the
+    # owner): a skipped required check counts as passed, so neither a branch name nor a push by someone else onto
+    # the owner's sync branch may avoid it. Where verify is a required check the sync uses a branch name that is
+    # never skipped (sync/repo-standards-*).
+    if: ${{ !(startsWith(github.head_ref, 'chore/repo-standards-') && github.event.pull_request.user.login == github.repository_owner && github.actor == github.repository_owner) }}
     # The `inputs` context is populated for workflow_dispatch ONLY. Resolving
     # the tool names here with a fallback means a push or pull_request run gets
     # the reference defaults rather than empty strings: previously every
